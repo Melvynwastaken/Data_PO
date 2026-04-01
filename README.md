@@ -56,3 +56,10 @@ Then open:
 - ArcGIS COVID-19 dataset
 - mmediagroup COVID API (optional)
 - Natural Earth geometries for mapping
+
+## details 
+ the project is structured to allow easy extension, such as adding more countries, 
+ incorporating additional data sources, or creating new types of visualizations.
+ The code is modular and well-documented for clarity and maintainability.
+ 
+## License
