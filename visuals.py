@@ -1,4 +1,3 @@
-# ...new file...
 """visuals.py
 Compact plotting helpers for the COVID notebook.
 Usage:
@@ -150,31 +149,70 @@ def plot_bubble_map(df: pd.DataFrame, metric: str = 'Confirmed', size_max: int =
     fig.show()
 
 
-def plot_time_series(df: pd.DataFrame, country: str, date_col: str = 'Last_Update'):
-    """Plot a simple time series of cumulative Confirmed, Recovered, Deaths for a country.
-    The function expects a column with dates (string or datetime). It groups by date after parsing.
+def plot_time_series(df: pd.DataFrame, country: Optional[str] = None, date_col: str = 'Last_Update', rolling: Optional[int] = None):
+    """Plot a simple time series of cumulative Confirmed, Recovered, Deaths.
+
+    - country: case-insensitive substring match on 'Country_Region' (if None, plots global totals)
+    - date_col: name of the column containing dates (strings or datetimes)
+    - rolling: optional integer window to smooth the time series (e.g., 7 for 7-day rolling)
+
+    Uses plotly if available, otherwise falls back to a matplotlib static plot.
     """
-    if not _HAS_PLOTLY:
-        raise RuntimeError('plotly is required for time series. Install plotly with `pip install plotly`')
+    # Check required columns and coerce numeric
+    for col in ['Confirmed', 'Recovered', 'Deaths']:
+        if col not in df.columns:
+            df[col] = 0
+        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
-    if 'Country_Region' not in df.columns:
-        raise KeyError('Country_Region column not found')
+    if date_col not in df.columns:
+        raise KeyError(f"Date column '{date_col}' not found in DataFrame")
 
-    sub = df[df['Country_Region'].astype(str).str.lower() == country.lower()]
-    if sub.empty:
-        raise ValueError(f"No data for country '{country}'")
+    # Filter by country if provided
+    sub = df
+    if country:
+        sub = filter_by_country(df, country)
+        if sub.empty:
+            raise ValueError(f"No rows match '{country}' in column 'Country_Region' or equivalent")
 
-    if date_col not in sub.columns:
-        raise KeyError(f"Date column '{date_col}' not found")
-
+    # Parse dates and group
     sub = sub.copy()
     sub[date_col] = pd.to_datetime(sub[date_col], errors='coerce')
     sub = sub.dropna(subset=[date_col])
+
     ts = sub.groupby(date_col).agg({'Confirmed': 'sum', 'Recovered': 'sum', 'Deaths': 'sum'}).sort_index()
 
-    fig = px.line(ts.reset_index(), x=date_col, y=['Confirmed', 'Recovered', 'Deaths'], title=f'{country} - cumulative counts')
-    fig.update_traces(mode='lines+markers')
-    fig.show()
+    if ts.empty:
+        raise ValueError('No valid date-indexed rows to plot after parsing dates')
+
+    if rolling and isinstance(rolling, int) and rolling > 1:
+        ts = ts.rolling(rolling).mean().dropna()
+
+    title = f"{'Global' if not country else country} - cumulative counts"
+
+    # Prefer Plotly if available for interactivity
+    if _HAS_PLOTLY:
+        try:
+            fig = px.line(ts.reset_index(), x=ts.index.name or date_col, y=['Confirmed', 'Recovered', 'Deaths'], title=title)
+            fig.update_traces(mode='lines+markers')
+            fig.update_layout(legend_title_text='Status')
+            fig.show()
+            return
+        except Exception:
+            # fall through to matplotlib fallback
+            pass
+
+    # Matplotlib fallback
+    plt.figure(figsize=(10, 5))
+    plt.plot(ts.index, ts['Confirmed'], label='Confirmed', color='#6baed6', marker='o')
+    plt.plot(ts.index, ts['Recovered'], label='Recovered', color='#74c476', marker='o')
+    plt.plot(ts.index, ts['Deaths'], label='Deaths', color='#de2d26', marker='o')
+    plt.title(title)
+    plt.xlabel('Date')
+    plt.ylabel('Counts')
+    plt.legend()
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -206,4 +244,3 @@ if __name__ == '__main__':
             print('\nPlotly not installed - skip interactive maps. Install with: pip install plotly')
     except Exception as e:
         print('Demo failed:', e)
-
