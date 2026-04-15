@@ -1,0 +1,272 @@
+ERD (ENTITY-RELATIONSHIP DIAGRAM) - COVID-19 DATA PROJECT
+===========================================================
+
+ENTITIES AND RELATIONSHIPS:
+───────────────────────────
+
+┌─────────────────────────────────┐
+│         LOCATION                │ (Entity 1)
+├─────────────────────────────────┤
+│ PK │ LocationID (OBJECTID)      │
+├─────────────────────────────────┤
+│    │ Country_Region (String)    │
+│    │ Province_State (String)    │
+│    │ Admin2 (String)            │
+│    │ Combined_Key (String)      │
+│    │ FIPS (String)              │
+│    │ Latitude (Float)           │
+│    │ Longitude (Float)          │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ Has (1:N)
+           │
+           ▼ N
+┌─────────────────────────────────┐
+│      COVID_CASE_DATA            │ (Entity 2)
+├─────────────────────────────────┤
+│ PK │ CaseID (Auto)              │
+│ FK │ LocationID                 │
+├─────────────────────────────────┤
+│    │ Confirmed (Integer)        │
+│    │ Deaths (Integer)           │
+│    │ Recovered (Integer)        │
+│    │ Active (Integer)           │
+│    │ Last_Update (DateTime)     │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ References (N:1)
+           │
+           ▼ N
+┌─────────────────────────────────┐
+│       COUNTRY_SUMMARY           │ (Entity 3)
+├─────────────────────────────────┤
+│ PK │ CountrySummaryID           │
+│ FK │ Country_Region (FK)        │
+├─────────────────────────────────┤
+│    │ Total_Confirmed (Integer)  │
+│    │ Total_Deaths (Integer)     │
+│    │ Total_Recovered (Integer)  │
+│    │ Total_Active (Integer)     │
+│    │ Last_Updated (DateTime)    │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ Aggregates (1:N)
+           │
+           ▼ N
+┌─────────────────────────────────┐
+│     DATA_SOURCE                 │ (Entity 4)
+├─────────────────────────────────┤
+│ PK │ SourceID                   │
+├─────────────────────────────────┤
+│    │ Source_Name (String)       │
+│    │ Source_URL (String)        │
+│    │ Last_Downloaded (DateTime) │
+│    │ Data_Format (String)       │
+│    │ Is_Active (Boolean)        │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ Provides (1:N)
+           │
+           ▼ N
+┌─────────────────────────────────┐
+│      DATASET_VERSION            │ (Entity 5)
+├─────────────────────────────────┤
+│ PK │ VersionID                  │
+│ FK │ SourceID                   │
+│ FK │ LocationID                 │
+├─────────────────────────────────┤
+│    │ Import_Date (DateTime)     │
+│    │ Record_Count (Integer)     │
+│    │ Data_Quality_Score (Float) │
+└─────────────────────────────────┘
+           │ N
+           │
+           │ Contains (N:N)
+           │
+           ▼ M
+┌─────────────────────────────────┐
+│      VISUALIZATION              │ (Entity 6)
+├─────────────────────────────────┤
+│ PK │ VisualizationID            │
+│ FK │ CountrySummaryID           │
+├─────────────────────────────────┤
+│    │ Visualization_Type         │
+│    │ (Choropleth/StackedBar)    │
+│    │ Generated_Date (DateTime)  │
+│    │ Output_Path (String)       │
+│    │ Is_Cached (Boolean)        │
+└─────────────────────────────────┘
+
+
+RELATIONSHIP SUMMARY:
+─────────────────────
+
+1. LOCATION ──(1:N)──► COVID_CASE_DATA
+   • One location can have multiple case records
+   • Cardinality: 1 to Many (1:N)
+   • Every case record belongs to ONE location
+
+2. COVID_CASE_DATA ──(N:1)──► COUNTRY_SUMMARY
+   • Multiple case records aggregate into country summary
+   • Cardinality: Many to 1 (N:1)
+   • One country summary contains many cases
+
+3. COUNTRY_SUMMARY ──(1:N)──► DATA_SOURCE
+   • One data source provides data for multiple countries
+   • Cardinality: 1 to Many (1:N)
+
+4. DATA_SOURCE ──(1:N)──► DATASET_VERSION
+   • One source has multiple versions/imports
+   • Cardinality: 1 to Many (1:N)
+
+5. DATASET_VERSION ◄──(N:N)──► COVID_CASE_DATA
+   • Many cases belong to many dataset versions
+   • Cardinality: Many to Many (N:N)
+   • Represents which cases were imported in which batch
+
+6. COUNTRY_SUMMARY ──(1:N)──► VISUALIZATION
+   • One country summary can have multiple visualizations
+   • Cardinality: 1 to Many (1:N)
+   • Different charts/maps for same country data
+
+
+ATTRIBUTES MAPPING FROM YOUR DATA:
+───────────────────────────────────
+
+From CSV columns to Entities:
+
+LOCATION Entity:
+  ✓ OBJECTID → LocationID (PK)
+  ✓ Country_Region
+  ✓ Province_State
+  ✓ Admin2
+  ✓ Combined_Key
+  ✓ FIPS
+  ✓ Lat → Latitude
+  ✓ Long_ → Longitude
+
+COVID_CASE_DATA Entity:
+  ✓ Confirmed
+  ✓ Deaths
+  ✓ Recovered (calculated: Confirmed - Deaths)
+  ✓ Active
+  ✓ Last_Update
+
+DATA_SOURCE Entity:
+  ✓ Source_URL = 'https://opendata.arcgis.com/datasets/bbb2e4f589ba40d692fab712ae37b9ac_1.csv'
+  ✓ Source_Name = 'ArcGIS COVID-19 Dataset'
+  ✓ Optional: mmediagroup API endpoint
+
+
+PRIMARY & FOREIGN KEYS:
+──────────────────────
+
+LOCATION
+  PK: LocationID (OBJECTID from CSV)
+
+COVID_CASE_DATA
+  PK: CaseID (generated)
+  FK: LocationID → LOCATION.LocationID
+
+COUNTRY_SUMMARY
+  PK: CountrySummaryID (generated)
+  FK: Country_Region → LOCATION.Country_Region
+
+DATA_SOURCE
+  PK: SourceID (generated)
+
+DATASET_VERSION
+  PK: VersionID (generated)
+  FK: SourceID → DATA_SOURCE.SourceID
+  FK: LocationID → LOCATION.LocationID
+
+VISUALIZATION
+  PK: VisualizationID (generated)
+  FK: CountrySummaryID → COUNTRY_SUMMARY.CountrySummaryID
+
+
+SQL SCHEMA EXAMPLE:
+───────────────────
+
+CREATE TABLE LOCATION (
+    LocationID INT PRIMARY KEY,
+    Country_Region VARCHAR(100),
+    Province_State VARCHAR(100),
+    Admin2 VARCHAR(100),
+    Combined_Key VARCHAR(255),
+    FIPS VARCHAR(10),
+    Latitude FLOAT,
+    Longitude FLOAT
+);
+
+CREATE TABLE COVID_CASE_DATA (
+    CaseID INT PRIMARY KEY AUTO_INCREMENT,
+    LocationID INT NOT NULL,
+    Confirmed INT DEFAULT 0,
+    Deaths INT DEFAULT 0,
+    Recovered INT DEFAULT 0,
+    Active INT DEFAULT 0,
+    Last_Update DATETIME,
+    FOREIGN KEY (LocationID) REFERENCES LOCATION(LocationID)
+);
+
+CREATE TABLE COUNTRY_SUMMARY (
+    CountrySummaryID INT PRIMARY KEY AUTO_INCREMENT,
+    Country_Region VARCHAR(100),
+    Total_Confirmed INT DEFAULT 0,
+    Total_Deaths INT DEFAULT 0,
+    Total_Recovered INT DEFAULT 0,
+    Total_Active INT DEFAULT 0,
+    Last_Updated DATETIME
+);
+
+CREATE TABLE DATA_SOURCE (
+    SourceID INT PRIMARY KEY AUTO_INCREMENT,
+    Source_Name VARCHAR(100),
+    Source_URL VARCHAR(500),
+    Last_Downloaded DATETIME,
+    Data_Format VARCHAR(20),
+    Is_Active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE DATASET_VERSION (
+    VersionID INT PRIMARY KEY AUTO_INCREMENT,
+    SourceID INT NOT NULL,
+    LocationID INT NOT NULL,
+    Import_Date DATETIME,
+    Record_Count INT,
+    Data_Quality_Score FLOAT,
+    FOREIGN KEY (SourceID) REFERENCES DATA_SOURCE(SourceID),
+    FOREIGN KEY (LocationID) REFERENCES LOCATION(LocationID)
+);
+
+CREATE TABLE VISUALIZATION (
+    VisualizationID INT PRIMARY KEY AUTO_INCREMENT,
+    CountrySummaryID INT NOT NULL,
+    Visualization_Type VARCHAR(50),
+    Generated_Date DATETIME,
+    Output_Path VARCHAR(255),
+    Is_Cached BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (CountrySummaryID) REFERENCES COUNTRY_SUMMARY(CountrySummaryID)
+);
+
+
+RELATIONSHIPS BREAKDOWN:
+───────────────────────
+
+✓ 6 Entities: LOCATION, COVID_CASE_DATA, COUNTRY_SUMMARY, DATA_SOURCE, DATASET_VERSION, VISUALIZATION
+
+✓ 1-to-1 Relationships:
+  (Can be added if needed, e.g., User to Preferences)
+
+✓ 2× 1-to-Many (1:N) Relationships:
+  1. LOCATION ──(1:N)──► COVID_CASE_DATA
+  2. COUNTRY_SUMMARY ──(1:N)──► VISUALIZATION
+
+✓ 1× Many-to-Many (N:N) Relationship:
+  1. DATASET_VERSION ◄──(N:N)──► COVID_CASE_DATA
+

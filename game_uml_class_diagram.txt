@@ -1,0 +1,173 @@
+UML CLASS DIAGRAM - ADVENTURE GAME
+=====================================
+
+Interface and Classes Relationships:
+─────────────────────────────────────
+
+┌─────────────────────────────┐
+│    <<interface>>            │
+│      Damageable             │
+├─────────────────────────────┤
+│ + takeDamage(amount: int)   │
+│ + getCurrentHealth(): int   │
+└─────────────────────────────┘
+        ▲           ▲
+        │           │
+        │ implements │ implements
+        │           │
+        │           ▼
+        │    ┌──────────────────────────────┐
+        │    │       Character (Abstract)    │
+        │    ├──────────────────────────────┤
+        │    │ # name: String               │
+        │    │ # health: int                │
+        │    │ # level: int                 │
+        │    │ # experience: int            │
+        │    │ - inventory: Inventory       │
+        │    ├──────────────────────────────┤
+        │    │ + abstract attack(): int     │
+        │    │ + takeDamage(amount: int)    │
+        │    │ + getCurrentHealth(): int    │
+        │    │ + gainExperience(exp: int)   │
+        │    │ + equip(weapon: Weapon)      │
+        │    └──────────────────────────────┘
+        │            ▲           ▲
+        │            │           │
+        │      inherits      inherits
+        │            │           │
+        │            ▼           ▼
+        │    ┌──────────────┐   ┌─────────────────┐
+        │    │    Player    │   │     Enemy       │
+        │    ├──────────────┤   ├─────────────────┤
+        │    │ - skills[]   │   │ - aiType: String│
+        │    │ - gold: int  │   │ - loot: Item[]  │
+        │    ├──────────────┤   ├─────────────────┤
+        │    │ + attack():  │   │ + attack():     │
+        │    │   int        │   │   int (AI-based)│
+        │    │ + cast       │   │ + drop Loot()   │
+        │    │   Spell()    │   │ + takeDamage()  │
+        │    └──────────────┘   └─────────────────┘
+        │
+        └─ implements ────► Boss (extends Enemy)
+                             ├─────────────────────┐
+                             │ - specialAbility    │
+                             │ - bossReward: Item  │
+                             ├─────────────────────┤
+                             │ + specialAttack()   │
+                             └─────────────────────┘
+
+
+COMPOSITION & ASSOCIATION RELATIONSHIPS:
+──────────────────────────────────────────
+
+        ┌─────────────────────┐
+        │      Game           │
+        ├─────────────────────┤
+        │ - currentLevel      │◆─────────────┐ 1
+        │ - player            │●─────────────┤────────┐ 1
+        │ - enemies[]         │●─────────────┤────────┤────┐ *
+        ├─────────────────────┤              │        │    │
+        │ + startGame()       │              │        │    │
+        │ + updateGame()      │              │        │    │
+        │ + endGame()         │              │        │    │
+        │ + getPlayer():      │              │        │    │
+        │   Player            │              │        │    │
+        └─────────────────────┘              │        │    │
+                                             │        │    │
+        ┌──────────────────────┐             │        │    │
+        │      Level           │◄────────────┘        │    │
+        ├──────────────────────┤                      │    │
+        │ - levelNumber: int   │                      │    │
+        │ - difficulty: int    │                      │    │
+        │ - mapSize: int       │                      │    │
+        │ - items[]            │                      │    │
+        ├──────────────────────┤                      │    │
+        │ + loadLevel()        │                      │    │
+        │ + getEnemies()[]     │                      │    │
+        │ + getItems()[]       │                      │    │
+        └──────────────────────┘                      │    │
+                                                      │    │
+        ┌──────────────────────┐                      │    │
+        │      Weapon          │◄─────────────────────┘    │
+        ├──────────────────────┤                           │
+        │ - name: String       │                           │
+        │ - damage: int        │                           │
+        │ - rarity: int        │                           │
+        ├──────────────────────┤                           │
+        │ + getDamage(): int   │                           │
+        │ + getDescription()   │                           │
+        └──────────────────────┘                           │
+                                                           │
+        ┌──────────────────────────┐                       │
+        │      Item                │◄──────────────────────┘
+        ├──────────────────────────┤
+        │ - itemId: int            │
+        │ - name: String           │
+        │ - type: String           │
+        │ - value: int             │
+        ├──────────────────────────┤
+        │ + use()                  │
+        │ + getDescription()       │
+        │ + getValue(): int        │
+        └──────────────────────────┘
+                ▲
+                │ inherits (part of relationship)
+                │
+        ┌──────────────────────┐
+        │    Inventory         │
+        ├──────────────────────┤
+        │ - items: Item[]      │
+        │ - maxCapacity: int   │
+        │ - currentWeight: int │
+        ├──────────────────────┤
+        │ + addItem(item)      │
+        │ + removeItem(item)   │
+        │ + getItems()[]       │
+        │ + isFull(): boolean  │
+        └──────────────────────┘
+
+
+RELATIONSHIP LEGEND:
+────────────────────
+◆ Composition (strong ownership)
+● Aggregation (weak ownership)
+▲ Inheritance/Realization
+─► Implementation (interface)
+* One to Many (*)
+1 One to One (1)
+
+
+KEY REQUIREMENTS MET:
+──────────────────────
+✓ 6+ Classes: Game, Character, Player, Enemy, Boss, Weapon, Item, Inventory, Level
+✓ 1 Abstract Class: Character (with 2+ inheritors: Player, Enemy)
+✓ 1 Interface: Damageable (implemented by Character and Boss)
+✓ All Classes have Relations:
+  - Game ──► Level, Player, Enemy[], Weapon, Item[]
+  - Character ──► Weapon, Inventory
+  - Player & Enemy inherit from Character
+  - Boss inherits from Enemy
+  - Inventory contains Items
+  - Level manages Items and Enemies
+
+
+RELATIONAL BREAKDOWN:
+─────────────────────
+1-to-1 Relationships:
+  • Game to Player (1:1)
+  • Game to Level (1:1)
+
+1-to-Many Relationships:
+  • Game to Enemy (1:*)
+  • Level to Item (1:*)
+
+Many-to-Many Relationships:
+  • Inventory to Item (implicitly through collection)
+
+Abstract Class Inheritance:
+  • Character (abstract) ◄── Player, Enemy
+  • Enemy ◄── Boss (extended enemy with special abilities)
+
+Interface Implementation:
+  • Damageable ◄── Character, Boss
+
