@@ -8,7 +8,7 @@ Dit project visualiseert COVID-19 gegevens op kaarten en in grafieken per land. 
 ### Hoe?
 1. **Data verzamelen** - Haalt COVID-19 statistieken op uit de ArcGIS dataset
 2. **Data verwerken** - Schoonmaken en aggregeren van gegevens per land
-3. **Visualiseren** - Creëert choropleth-kaarten (gekleurde wereldkaarten) en staafdiagrammen
+3. **Visualiseren** - Creëert wereldkaarten en staafdiagrammen
 
 ### Waarom?
 - **Inzicht geven** - Maakt het makkelijk om de verspreiding van COVID-19 wereldwijd te begrijpen
@@ -19,7 +19,7 @@ Dit project visualiseert COVID-19 gegevens op kaarten en in grafieken per land. 
 ## Technieken gebruikt
 - **Python** - Programmertaal voor data verwerking
 - **Pandas** - Data manipulatie en analyse
-- **GeoPandas** - Geografische data en kaarten
+- **plotly** - Geografische data en kaarten
 - **Matplotlib** - Visualisaties maken
 - **Jupyter** - Interactieve notebooks voor analyse
 
