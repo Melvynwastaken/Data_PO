@@ -2,7 +2,7 @@
 
 ---
 
-## Testscenario 1 – [requirements.txt]
+## Testscenario 1 – requirements.txt
 
 ### Hoofdscenario – Dependencies installeren zonder requirements.txt
 Tijdens het testen van dit scenario is gecontroleerd dat het project correct functioneert na installatie van dependencies via requirements.txt
@@ -53,7 +53,7 @@ Wanneer requirements.txt in een virtuele environment wordt gebruikt:
 
 ---
 
-## Testscenario 2 – [API caching]
+## Testscenario 2 – API caching
 
 ### Hoofdscenario – Cache werkt correct
 Tijdens het testen is gecontroleerd dat CSV data correct wordt gecached en niet herhaaldelijk wordt opgehaald
@@ -104,7 +104,7 @@ Bij twee opeenvolgende Cell 1 runs zonder pauze:
 
 ---
 
-## Testscenario 3 – [Columns van de API]
+## Testscenario 3 – Columns van de API
 
 ### Hoofdscenario – Kolom validatie
 Tijdens het testen is gecontroleerd dat alle COVID-19 kolommen correct uit CSV worden opgehaald

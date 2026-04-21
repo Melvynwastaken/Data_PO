@@ -1,6 +1,6 @@
 # Testscenarios – covid-19 data project
 
-## Testscenario 1 – [requirements.txt]
+## Testscenario 1 – requirements.txt
 
 **Doel:** Verifiëren dat alle benodigde libraries correct worden geïnstalleerd en het project volledig functioneert  
 **Preconditie:** Python 3.8+ is geïnstalleerd, pip is beschikbaar, internetverbinding aanwezig
@@ -78,7 +78,7 @@
 
 ---
 
-## Testscenario 2 – [API caching]
+## Testscenario 2 – API caching
 
 **Doel:** Verifiëren dat data correct wordt gecached en niet herhaaldelijk opnieuw wordt opgehaald  
 **Preconditie:** Internetverbinding, requirements.txt geïnstalleerd, CSV URL bereikbaar
@@ -156,7 +156,7 @@
 
 ---
 
-## Testscenario 3 – [Columns van de API]
+## Testscenario 3 – Columns van de API
 
 **Doel:** Verifiëren dat alle COVID-19 API kolommen correct worden opgehaald en verwerkt  
 **Preconditie:** CSV file bereikbaar, analyse.ipynb geopend

@@ -29,4 +29,4 @@ en geen persoonlijke of gevoelige informatie bevat.
 private data is niet van toepassing omdat er geen persoonlijke gegevens worden opgeslagen of verwerkt in deze database.
 - ## security
 De security van deze database is afhankelijk van de implementatie en het beheer ervan.
-daarom 
+Er is een zoek functie bij een van de visualitaties maar deze is alleen gebaseerd op de data in de database.

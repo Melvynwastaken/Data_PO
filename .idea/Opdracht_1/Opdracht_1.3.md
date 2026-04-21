@@ -9,6 +9,9 @@ We hebben de benodigde libraries geïnstalleerd, een virtuele omgeving opgezet,
 en de eerste stappen gezet in het schrijven van code om data te downloaden en te verwerken.
 We hebben ook de structuur van het project opgezet, 
 inclusief het organiseren van bestanden en het plannen van de volgende stappen in de backlog.
+
+Ik had de datum op 15-04 want ik dacht dat ik langere sprint zou hebben maar uiteindelijk waren mijn 
+sprints korter (5 dagen) dus vandaar dat de dagen 15 en 17 april zo dit op elkaar zitten.
 - ## sprint 2
 - ![img_12.png](img_12.png)
 
