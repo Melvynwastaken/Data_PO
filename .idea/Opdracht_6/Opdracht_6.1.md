@@ -1,3 +1,2 @@
 # Opdracht 6.1
-
-https://www.youtube.com/watch?v=aaaaaaaaaaa
+[stand up](https://youtu.be/QBZiDClT-hs)
