@@ -1,2 +1,2 @@
 # Opdracht 6.1
-[stand up](https://youtu.be/QBZiDClT-hs)
+ga naar de je portfolio repository voor de videos
