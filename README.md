@@ -24,7 +24,6 @@ conda install -c conda-forge geopandas geodatasets fiona shapely pyproj rtree ma
 Or using pip:
 ```bash
 python -m pip install -r requirements.txt
-python -m pip install geodatasets
 ```
 
 ### 2. Run the Map Script
