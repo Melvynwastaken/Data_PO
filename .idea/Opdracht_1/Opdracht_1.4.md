@@ -15,8 +15,10 @@
 - Op dag 3 van de sprint heb de visualitatie code block getest voor mezelf
 - ## dag 4
 ![img_16.png](img_16.png)
+- op dag 4 ging ik aan de slag met de live map en ging ik requiremnt testen.
 - ## dag 5
 - ![img_17.png](img_17.png)
+- Op dag 5 was ik bezig met het nakijken en heb ik de tickets afgerond ging redeliijk omdat ik al veel had gedaan de dagen ervoor en ik wilde het snel afronden.
 ## Sprint 2
 
 - summary
